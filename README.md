@@ -1,0 +1,2 @@
+# QrCodeReaderApp
+QrCodeReaderApp
