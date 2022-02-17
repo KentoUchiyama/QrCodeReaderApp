@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2 class="text-center pt-4"><span>QRコードをかざしてください</span></h2>
+<div class="text-center mx-auto">
+    <video id="video" class="qrvideo" autoplay></video>
+    <form asp-controller="home" asp-action="readresult">
+        <input name="qrdata" id="qrdata" type="hidden" />
+        <input name="select" id="select" value="LoginCamera" type="hidden" />
+    </form>
+</div>
+
+@section Scripts{
+    @* jsQR https://cdn.jsdelivr.net/npm/jsqr@latest/dist/jsQR.min.js *@
+    <script src="~/lib/jsqr/jsQR.min.js"></script>
+    <script src="~/js/qr_read.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            @* カメラの最大サイズを調整する *@
+            var w = $(window).width();
+            var h = $(window).height();
+            $('#video').width(w);
+            $('#video').height(h - convertRemToPx(10) - 10);
+
+            @* QRコードを読み取った場合 *@
+            $('#qrdata').change(function () {
+                console.log($('#qrdata').val());
+                @* QRコードをPOST送信する *@
+                $('form').submit();
+            });
+
+            @* キャンバスサイズの設定 *@
+            var canvasSize = { width: $('#video').width(), height: $('#video').height() };
+
+            @* QRコードを読み込む *@
+            console.log("call qrReadByCamera...");
+            qrReadByCamera('video', 'qrdata', 'environment', canvasSize);
+        });
+
+        function convertRemToPx(rem) {
+            var fontSize = getComputedStyle(document.documentElement).fontSize;
+            return rem * parseFloat(fontSize);
+        }
+
+        document.oncontextmenu = function () {
+            return false;
+        }
+    </script>
+}
